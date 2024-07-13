@@ -172,3 +172,12 @@ hr {
   background-color: transparent;
   color: #869999;
 }
+
+.control:has(.ng-invalid.ng-touched.ng-dirty) label {
+  color: lightcoral;
+}
+
+input.ng-invalid.ng-touched.ng-dirty {
+  background-color: lightcoral;
+  color: red;
+}

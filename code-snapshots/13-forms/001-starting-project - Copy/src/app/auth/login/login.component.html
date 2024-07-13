@@ -1,17 +1,42 @@
-<form>
+<form #form="ngForm" (ngSubmit)="onSubmit(form)">
   <h2>Login</h2>
 
   <div class="control-row">
     <div class="control no-margin">
       <label for="email">Email</label>
-      <input id="email" type="email" />
+      <input
+        id="email"
+        type="email"
+        name="email"
+        [(ngModel)]="email"
+        [required]="true"
+        email
+        #emailCtl="ngModel"
+      />
     </div>
 
     <div class="control no-margin">
       <label for="password">Password</label>
-      <input id="password" type="password" />
+      <input
+        autocomplete="new-password"
+        id="password"
+        type="password"
+        name="password"
+        [(ngModel)]="password"
+        [required]="true"
+        [minlength]="6"
+        #pass="ngModel"
+      />
     </div>
 
     <button class="button">Login</button>
   </div>
+
+  @if(emailCtl.invalid && emailCtl.touched && emailCtl.dirty) {
+  <p class="control-error">Email address is invalid.</p>
+  } @if(pass.invalid && pass.touched && pass.dirty) {
+  <p class="control-error">
+    Password is invalid - Must be 6 characters or longer.
+  </p>
+  }
 </form>
