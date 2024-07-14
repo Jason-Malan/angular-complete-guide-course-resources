@@ -1,11 +1,41 @@
 import { Component } from '@angular/core';
 import {
+  AbstractControl,
   FormArray,
   FormControl,
   FormGroup,
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
+
+function equalValues(...controlNames: string[]) {
+  return (control: AbstractControl) => {
+    const keys = Object.keys(control.value).filter((key) =>
+      controlNames.includes(key)
+    );
+
+    let values: string[] = [];
+    keys.forEach((key) => {
+      values.push(control.value[key]);
+    });
+
+    let isEqual = true;
+    for (let index = 0; index < values.length; index++) {
+      const element1 = values[index];
+      for (let index = 0; index < values.length; index++) {
+        const element2 = values[index];
+        if (isEqual) {
+          isEqual = element1 === element2;
+        }
+      }
+    }
+
+    console.log(isEqual);
+
+    if (isEqual) return null;
+    return { valuesNotEqual: true };
+  };
+}
 
 @Component({
   selector: 'app-signup',
@@ -19,14 +49,17 @@ export class SignupComponent {
     email: new FormControl('', {
       validators: [Validators.required, Validators.email],
     }),
-    passwords: new FormGroup({
-      password: new FormControl('', {
-        validators: [Validators.required, Validators.minLength(6)],
-      }),
-      confirmPassword: new FormControl('', {
-        validators: [Validators.required, Validators.minLength(6)],
-      }),
-    }),
+    passwords: new FormGroup(
+      {
+        password: new FormControl('', {
+          validators: [Validators.required, Validators.minLength(6)],
+        }),
+        confirmPassword: new FormControl('', {
+          validators: [Validators.required, Validators.minLength(6)],
+        }),
+      },
+      { validators: [equalValues('password', 'confirmPassword')] }
+    ),
     firstName: new FormControl('', { validators: [Validators.required] }),
     lastName: new FormControl('', { validators: [Validators.required] }),
     address: new FormGroup({
