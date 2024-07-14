@@ -6,10 +6,27 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
+import { Observable } from 'rxjs';
 
 function mustContainQuestionMark(control: AbstractControl) {
   if (control.value.includes('?')) return null;
   return { doesNotContainQuestionMark: true };
+}
+
+function emailIsUnique(
+  control: AbstractControl
+): Observable<{ [key: string]: any } | null> {
+  return new Observable((sub) => {
+    setTimeout(() => {
+      if (control.value.includes('jason@gmail.com')) {
+        sub.next({ emailNotUnique: true });
+      } else {
+        sub.next(null);
+      }
+
+      sub.complete();
+    }, 1000);
+  });
 }
 
 @Component({
@@ -23,6 +40,7 @@ export class LoginReactiveComponent {
   form = new FormGroup({
     email: new FormControl('', {
       validators: [Validators.required, Validators.email],
+      asyncValidators: [emailIsUnique],
     }),
     password: new FormControl('', {
       validators: [
